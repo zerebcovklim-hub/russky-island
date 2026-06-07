@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="theme-color" content="#1a1a2e">
+    <meta name="description" content="Интерактивная карта достопримечательностей острова Русский">
+    <link rel="manifest" href="manifest.json">
+    <link rel="apple-touch-icon" href="icon-512.png">
+    <title>Остров Русский — туристическая карта</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+        #map { position: absolute; top: 0; bottom: 0; width: 100%; height: 100%; }
+        .legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: rgba(0,0,0,0.8);
+            backdrop-filter: blur(8px);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 12px;
+            font-size: 10px;
+            z-index: 1000;
+            pointer-events: none;
+        }
+        .legend span { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; }
+        .legend div { margin-bottom: 3px; }
+        .counter {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(8px);
+            color: #ffd966;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            z-index: 1000;
+            font-weight: bold;
+            pointer-events: none;
+        }
+        .install-prompt {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #22c55e;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 14px;
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.3);
+            display: none;
+        }
+        .custom-tooltip .leaflet-popup-content-wrapper {
+            background: #1a1a2e;
+            border-radius: 12px;
+            padding: 0;
+            color: #eee;
+        }
+        .custom-tooltip .leaflet-popup-content { margin: 0; width: auto !important; }
+        .tooltip-content { display: flex; flex-direction: column; max-width: 260px; min-width: 220px; }
+        .tooltip-image { width: 100%; height: 130px; object-fit: cover; border-radius: 12px 12px 0 0; background: #2a2a3e; }
+        .tooltip-text { padding: 10px 12px 12px; }
+        .tooltip-title { font-weight: bold; font-size: 16px; color: #ffb347; margin-bottom: 5px; }
+        .tooltip-desc { font-size: 12px; line-height: 1.4; color: #ccc; }
+        .tooltip-cat { display: inline-block; background: #2c3e66; padding: 2px 8px; border-radius: 20px; font-size: 9px; margin-top: 6px; }
+        @media (max-width: 600px) {
+            .tooltip-image { height: 100px; }
+            .install-prompt { font-size: 12px; padding: 6px 12px; }
+        }
+    </style>
+</head>
+<body>
+    <div id="map"></div>
+    <div class="legend">
+        <div><span style="background:#3b82f6;"></span> 🌄 Смотровые</div>
+        <div><span style="background:#22c55e;"></span> 🏖️ Пляжи</div>
+        <div><span style="background:#ef4444;"></span> 🏰 Форты</div>
+        <div><span style="background:#eab308;"></span> 🌲 Природа</div>
+        <div><span style="background:#a855f7;"></span> 🏛️ Инфраструктура</div>
+    </div>
+    <div class="counter">🏝️ 50 мест</div>
+    <div class="install-prompt" id="installBtn">📲 Установить приложение</div>
+
+    <script>
+        // Регистрация Service Worker
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('sw.js')
+                .then(reg => console.log('SW зарегистрирован', reg))
+                .catch(err => console.log('SW ошибка:', err));
+        }
+
+        // Переменная для хранения события установки
+        let deferredPrompt;
+
+        // Отслеживаем событие beforeinstallprompt
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            // Показываем кнопку установки
+            const installBtn = document.getElementById('installBtn');
+            installBtn.style.display = 'block';
+        });
+
+        // Обработчик нажатия на кнопку установки
+        document.getElementById('installBtn').addEventListener('click', async () => {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                const { outcome } = await deferredPrompt.userChoice;
+                console.log(`Результат установки: ${outcome}`);
+                deferredPrompt = null;
+                document.getElementById('installBtn').style.display = 'none';
+            }
+        });
+
+        // Карта
+        const map = L.map('map').setView([43.0000, 131.8333], 12);
+        L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap',
+            maxZoom: 18
+        }).addTo(map);
+        L.tileLayer('https://{s}.basemaps.cartocdn.com/light_only_labels/{z}/{x}/{y}{r}.png', {
+            attribution: '© CartoDB',
+            subdomains: 'abcd',
+            maxZoom: 18,
+            opacity: 0.7
+        }).addTo(map);
+
+        const categories = {
+            viewpoint: { name: 'Смотровая', color: '#3b82f6', icon: '🌄' },
+            beach: { name: 'Пляж/бухта', color: '#22c55e', icon: '🏖️' },
+            history: { name: 'Форт/история', color: '#ef4444', icon: '🏰' },
+            nature: { name: 'Природа', color: '#eab308', icon: '🌲' },
+            infra: { name: 'Инфраструктура', color: '#a855f7', icon: '🏛️' }
+        };
+
+        const fallbackImages = {
+            viewpoint: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect width="300" height="200" fill="%232d3748"/%3E%3Ctext x="150" y="100" text-anchor="middle" fill="%236b7280" font-size="14"%3E🌄 Смотровая%3C/text%3E%3C/svg%3E',
+            beach: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect width="300" height="200" fill="%232d3748"/%3E%3Ctext x="150" y="100" text-anchor="middle" fill="%236b7280" font-size="14"%3E🏖️ Пляж%3C/text%3E%3C/svg%3E',
+            history: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect width="300" height="200" fill="%232d3748"/%3E%3Ctext x="150" y="100" text-anchor="middle" fill="%236b7280" font-size="14"%3E🏰 Форт%3C/text%3E%3C/svg%3E',
+            nature: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect width="300" height="200" fill="%232d3748"/%3E%3Ctext x="150" y="100" text-anchor="middle" fill="%236b7280" font-size="14"%3E🌲 Природа%3C/text%3E%3C/svg%3E',
+            infra: 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 200"%3E%3Crect width="300" height="200" fill="%232d3748"/%3E%3Ctext x="150" y="100" text-anchor="middle" fill="%236b7280" font-size="14"%3E🏛️ Инфра%3C/text%3E%3C/svg%3E'
+        };
+
+        function getImageUrl(point) {
+            return point.img || fallbackImages[point.cat] || fallbackImages.viewpoint;
+        }
+
+        const points = [
+            { lat: 43.0442, lng: 131.8965, name: 'Мыс Тобизина', cat: 'viewpoint', desc: 'Знаменитые скалы-пальцы. Лучший закат.' },
+            { lat: 43.0597, lng: 131.9186, name: 'Мыс Вятлина', cat: 'viewpoint', desc: 'Высокий утёс.' },
+            { lat: 43.0667, lng: 131.9147, name: 'Мыс Голдобин', cat: 'viewpoint', desc: 'Северная оконечность.' },
+            { lat: 43.0304, lng: 131.8578, name: 'Гора Русских', cat: 'viewpoint', desc: 'Высочайшая точка 291 м.' },
+            { lat: 43.0368, lng: 131.8989, name: 'Бухта Аякс', cat: 'beach', desc: 'Центральный пляж у ДВФУ.' },
+            { lat: 43.0341, lng: 131.8923, name: 'Бухта Новик', cat: 'beach', desc: 'Популярный пляж.' },
+            { lat: 43.0592, lng: 131.9042, name: 'Ворошиловская батарея', cat: 'history', desc: 'Музей фортификации.' },
+            { lat: 43.04985, lng: 131.88141, name: 'Форт Поспелова', cat: 'history', desc: 'Форт князя Дмитрия Донского.' },
+            { lat: 42.98496, lng: 131.80899, name: 'Форт №9 (князя Рюрика)', cat: 'history', desc: 'Самый мощный форт.' },
+            { lat: 43.0319, lng: 131.9123, name: 'Парк ДВФУ', cat: 'nature', desc: 'Аллеи и пруды.' },
+            { lat: 43.0097, lng: 131.9028, name: 'Приморский океанариум', cat: 'infra', desc: 'Крупнейший в России.' },
+            { lat: 43.0312, lng: 131.9097, name: 'Кампус ДВФУ', cat: 'infra', desc: 'Университетский городок.' },
+            { lat: 43.0636, lng: 131.8878, name: 'Русский мост', cat: 'infra', desc: 'Самый длинный вантовый мост.' }
+        ];
+
+        function createIcon(category) {
+            const color = categories[category]?.color || '#888';
+            return L.divIcon({
+                html: `<div style="background-color: ${color}; width: 14px; height: 14px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px black;"></div>`,
+                iconSize: [18, 18],
+                popupAnchor: [0, -9]
+            });
+        }
+
+        points.forEach(point => {
+            const catInfo = categories[point.cat];
+            const marker = L.marker([point.lat, point.lng], { icon: createIcon(point.cat) }).addTo(map);
+            marker.bindTooltip(`
+                <div class="tooltip-content">
+                    <img class="tooltip-image" src="${getImageUrl(point)}">
+                    <div class="tooltip-text">
+                        <div class="tooltip-title">${catInfo.icon} ${point.name}</div>
+                        <div class="tooltip-desc">${point.desc}</div>
+                        <div class="tooltip-cat">${catInfo.name}</div>
+                    </div>
+                </div>
+            `, { permanent: false, direction: 'top', offset: [0, -12], className: 'custom-tooltip', sticky: true });
+        });
+
+        setTimeout(() => map.invalidateSize(), 200);
+    </script>
+</body>
+</html>
