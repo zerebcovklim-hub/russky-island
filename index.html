@@ -26,14 +26,13 @@
             z-index: 1;
         }
         
-        /* ===== ПРИВЕТСТВЕННЫЙ ЭКРАН С КАРТИНКОЙ ===== */
+        /* ===== ПРИВЕТСТВЕННЫЙ ЭКРАН ===== */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            /* ВОТ ЗДЕСЬ ЗАМЕНИЛ ФОН НА КАРТИНКУ ИЗ ПАПКИ images */
             background: url('images/splash-bg.jpg') no-repeat center center fixed;
             background-size: cover;
             z-index: 10000;
@@ -169,7 +168,175 @@
             font-family: monospace;
         }
         
-        /* ===== ВСПЛЫВАЮЩИЕ ОКНА ПРИ НАЖАТИИ ===== */
+        /* ===== ИКОНКА ИЗБРАННОГО ===== */
+        .favorites-btn {
+            position: absolute;
+            bottom: 80px;
+            right: 20px;
+            background: #ef4444;
+            width: 55px;
+            height: 55px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            cursor: pointer;
+            z-index: 1000;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            transition: transform 0.2s;
+            border: 2px solid white;
+        }
+        
+        .favorites-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .favorites-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: white;
+            color: #ef4444;
+            font-size: 12px;
+            font-weight: bold;
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ef4444;
+        }
+        
+        /* ===== ВЫПАДАЮЩАЯ ПАНЕЛЬ ИЗБРАННОГО ===== */
+        .favorites-panel {
+            position: absolute;
+            bottom: 150px;
+            right: 20px;
+            width: 280px;
+            max-height: 400px;
+            background: rgba(15,15,26,0.95);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            z-index: 1000;
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+            border: 1px solid rgba(255,255,255,0.2);
+            box-shadow: 0 10px 40px rgba(0,0,0,0.4);
+        }
+        
+        .favorites-panel.show {
+            display: flex;
+        }
+        
+        .favorites-header {
+            padding: 15px;
+            background: #1a1a2e;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            font-weight: bold;
+            color: #ffb347;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .favorites-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #aaa;
+        }
+        
+        .favorites-close:hover {
+            color: white;
+        }
+        
+        .favorites-list {
+            flex: 1;
+            overflow-y: auto;
+            max-height: 350px;
+        }
+        
+        .favorite-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.08);
+            cursor: pointer;
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .favorite-item:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        
+        .favorite-item-icon {
+            font-size: 18px;
+        }
+        
+        .favorite-item-name {
+            flex: 1;
+            color: #eee;
+            font-size: 14px;
+        }
+        
+        .favorite-item-remove {
+            color: #ef4444;
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+        }
+        
+        .favorite-item-remove:hover {
+            opacity: 0.7;
+        }
+        
+        .empty-favorites {
+            padding: 40px;
+            text-align: center;
+            color: #aaa;
+            font-size: 14px;
+        }
+        
+        /* ===== СЕРДЕЧКО В ПОПАПЕ (УВЕЛИЧЕННОЕ И КОНТРАСТНОЕ) ===== */
+        .like-btn {
+            background: rgba(255,255,255,0.15);
+            border: 2px solid rgba(255,255,255,0.3);
+            font-size: 32px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        
+        .like-btn:hover {
+            transform: scale(1.08);
+            background: rgba(255,255,255,0.25);
+        }
+        
+        .like-btn.liked {
+            background: rgba(239,68,68,0.2);
+            border-color: #ef4444;
+            color: #ef4444;
+        }
+        
+        .popup-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            gap: 15px;
+        }
+        
+        /* ===== ВСПЛЫВАЮЩИЕ ОКНА ===== */
         .custom-popup .leaflet-popup-content-wrapper {
             background: #0f0f1a;
             border-radius: 24px;
@@ -223,11 +390,7 @@
             font-weight: bold;
             font-size: 22px;
             color: #ffb347;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
+            flex: 1;
         }
         
         .popup-description {
@@ -274,6 +437,22 @@
             }
             .splash-icon {
                 font-size: 60px;
+            }
+            .favorites-panel {
+                width: 260px;
+                right: 10px;
+                bottom: 130px;
+            }
+            .favorites-btn {
+                width: 48px;
+                height: 48px;
+                font-size: 24px;
+                bottom: 70px;
+            }
+            .like-btn {
+                width: 44px;
+                height: 44px;
+                font-size: 26px;
             }
         }
         
@@ -339,6 +518,24 @@
         <div><span style="background:#f97316;"></span> 🌉 Мост (1)</div>
     </div>
     <div class="counter">🏝️ 19 достопримечательностей</div>
+    
+    <!-- ИКОНКА ИЗБРАННОГО -->
+    <div class="favorites-btn" id="favoritesBtn">
+        ❤️
+        <span class="favorites-count" id="favoritesCount">0</span>
+    </div>
+    
+    <!-- ВЫПАДАЮЩАЯ ПАНЕЛЬ ИЗБРАННОГО -->
+    <div class="favorites-panel" id="favoritesPanel">
+        <div class="favorites-header">
+            <span>❤️ Избранное</span>
+            <span class="favorites-close" id="favoritesClose">✕</span>
+        </div>
+        <div class="favorites-list" id="favoritesList">
+            <div class="empty-favorites">Нет сохранённых мест</div>
+        </div>
+    </div>
+    
     <button class="install-prompt" id="installBtn">📲 Установить приложение</button>
 
     <!-- ПРИВЕТСТВЕННЫЙ ЭКРАН -->
@@ -350,7 +547,7 @@
             <div class="splash-features">
                 <div class="feature">🏝️ 19+ мест</div>
                 <div class="feature">📸 Фото и описания</div>
-                <div class="feature">📴 Работает офлайн</div>
+                <div class="feature">❤️ Избранное</div>
             </div>
             <button class="splash-btn" id="startBtn">Начать путешествие →</button>
         </div>
@@ -417,135 +614,135 @@
             road: { name: 'Мост', color: '#f97316', icon: '🌉' }
         };
         
-        // ===== НАЗВАНИЯ ФАЙЛОВ ФОТОГРАФИЙ (из папки images) =====
-        function getImagePath(imageName) {
-            return `images/${imageName}`;
+        // ===== УПРАВЛЕНИЕ ИЗБРАННЫМ =====
+        let favorites = JSON.parse(localStorage.getItem('favorites') || '[]');
+        
+        function saveFavorites() {
+            localStorage.setItem('favorites', JSON.stringify(favorites));
+            updateFavoritesUI();
         }
         
-        // ===== ТОЧКИ С ЛОКАЛЬНЫМИ ФОТОГРАФИЯМИ =====
-        const points = [
-            { 
-                lat: 42.944895, lng: 131.870695, name: 'Мыс Тобизина', cat: 'viewpoint', 
-                img: 'mys-tobizina.jpg',
-                desc: 'Знаменитые скалы-пальцы, один из самых живописных мысов Приморья. Тропа 2.5 км через лес. Лучшее место для заката на острове. Здесь можно увидеть лежбища нерп и редкие виды птиц. Рекомендуется посещать с мая по октябрь.' 
-            },
-            { 
-                lat: 42.958292, lng: 131.906837, name: 'Мыс Вятлина', cat: 'viewpoint', 
-                img: 'mys-vyatlinа.jpg',
-                desc: 'Высокий утёс с обрывистыми скалами и видом на открытое море. Популярное место для уединённых прогулок. Отсюда открывается панорама на Уссурийский залив и архипелаг. Особенно красиво здесь во время цветения рододендронов в мае-июне.' 
-            },
-            { 
-                lat: 43.018794, lng: 131.777887, name: 'Мыс Таран', cat: 'viewpoint', 
-                img: 'mys-taran.jpg',
-                desc: 'Это обрывистый скалистый мыс, сложенный из выветрившихся пластов красного гранита, который отвесно обрывается в залив. С него открывается живописный вид на бухту и противоположный мыс Половцева.' 
-            },
-            { 
-                lat: 43.031389, lng: 131.836111, name: 'Гора Русских', cat: 'viewpoint', 
-                img: 'gora-russkih.jpg',
-                desc: 'Высочайшая точка острова — 291 м над уровнем моря. Подъём около часа пешком. Награда — потрясающая панорама на весь остров, Амурский залив и Владивосток. На вершине можно найти остатки фортификационных сооружений.' 
-            },
-            { 
-                lat: 43.037131, lng: 131.900738, name: 'Бухта Аякс', cat: 'beach', 
-                img: 'buhta-ayaks.jpg',
-                desc: 'Центральный пляж у кампуса ДВФУ. Протяжённая набережная 1200 м с велодорожками. Есть шезлонги, кафе, прокат сапов и катамаранов. Отличное место для семейного отдыха, купания и прогулок. Летом проводятся концерты и фестивали.' 
-            },
-            { 
-                lat: 43.047816, lng: 131.847954, name: 'Бухта Новик', cat: 'beach', 
-                img: 'buhta-novik.jpg',
-                desc: 'Популярный пляж с мелководьем и пологим берегом. Идеально для купания с детьми. Песок смешанный с галькой. Есть раздевалки и небольшое кафе. Вода прогревается быстрее, чем в других бухтах. Добраться можно на автобусе 29Д.' 
-            },
-            { 
-                lat: 42.987619, lng: 131.752733, name: 'Бухта Боярин', cat: 'beach', 
-                img: 'buhta-boyarin.jpg',
-                desc: 'Уединённая галечная бухта на севере острова. Чистая прозрачная вода, мало людей. Добраться сложнее — нужен внедорожник или хорошая физическая подготовка (пешком 3 км). Награда — дикая природа и отсутствие цивилизации.' 
-            },
-            { 
-                lat: 42.981838, lng: 131.890520, name: 'Ворошиловская батарея', cat: 'history', 
-                img: 'voroshilovskaya-batareya.jpg',
-                desc: 'Береговая бронебашенная батарея №981 — уникальный музей фортификации под открытым небом. Две башни с орудиями МБ-3-12 калибром 305 мм. Внутри можно увидеть подземные помещения, механизмы подачи снарядов. Вход — 200-300 ₽. Экскурсии проводятся ежедневно.' 
-            },
-            { 
-                lat: 43.049852, lng: 131.881409, name: 'Форт Поспелова', cat: 'history', 
-                img: 'fort-pospelova.jpg',
-                desc: 'Форт князя Дмитрия Донского — часть Владивостокской крепости. Подземные потерны длиной до 50 м, каменный лабиринт «Небо», панорама на остров Скрыплева. Сохранились казармы, артиллерийские дворики. Вход свободный, но нужен фонарик.' 
-            },
-            { 
-                lat: 42.984961, lng: 131.808994, name: 'Форт №9 (князя Рюрика)', cat: 'history', 
-                img: 'fort-9.jpg',
-                desc: 'Самый мощный форт острова. Высота около 160 м над уровнем моря. Отличные виды на архипелаг и море. Сохранились подземные ходы, капониры, пороховые погреба. Построен в 1900-1910 годах. Обязательно взять с собой фонарик и удобную обувь.' 
-            },
-            { 
-                lat: 43.027934, lng: 131.894033, name: 'Парк ДВФУ', cat: 'nature', 
-                img: 'park-dvfu.jpg',
-                desc: 'Благоустроенный парк на территории кампуса ДВФУ. Аллеи, пруды с карпами, японский сад с пагодой. Отличное место для прогулок, пробежек и пикников. Летом проводятся концерты и фестивали. Вход свободный. Красивый вид на бухту Аякс и Русский мост.' 
-            },
-            { 
-                lat: 43.014654, lng: 131.930501, name: 'Приморский океанариум', cat: 'infra', 
-                img: 'oceanarium.jpg',
-                desc: 'Один из крупнейших океанариумов в мире. 135 аквариумов с 6000+ обитателей. Шоу дельфинов и косаток, туннель с акулами, экспозиция «Эволюция жизни». Взрослый билет — 1200 ₽, детский — 700 ₽. Работает со среды по воскресенье.' 
-            },
-            { 
-                lat: 43.024320, lng: 131.894809, name: 'Кампус ДВФУ', cat: 'infra', 
-                img: 'campus-dvfu.jpg',
-                desc: 'Университетский городок на берегу бухты Аякс. Современная архитектура, удобная набережная, бесплатные маршрутки по территории. Можно прогуляться по кампусу, зайти в столовые и кафе. Красивый вид на море и мост. Вход свободный.' 
-            },
-            { 
-                lat: 43.064860, lng: 131.910413, name: 'Русский мост', cat: 'road', 
-                img: 'russky-bridge.jpg',
-                desc: 'Один из самых длинных вантовых мостов в мире — 1104 метра! Высота пилонов 324 метра. Построен в 2012 году к саммиту АТЭС. Изображён на купюре 2000 рублей. Соединяет материк с островом. Можно пройти по тротуару — потрясающий вид на пролив Босфор Восточный.' 
-            },
-            { 
-                lat: 43.043701, lng: 131.821919, name: 'Свято-Серафимовский монастырь', cat: 'infra', 
-                img: 'monax.jpg',
-                desc: 'Монастырь основан 11 октября 2001 года постановлением Священного Синода Русской православной церкви. Приход храма преподобного Серафима Саровского на острове Русский преобразован в мужской монастырь.' 
-            },
-            { 
-                lat: 43.057213, lng: 131.900984, name: 'Батарея Новосильцевская', cat: 'history', 
-                img: 'novoc.jpg',
-                desc: 'Архитектурный ансамбль во Владивостоке, входит в комплекс фортификационных сооружений Владивостокской крепости. Расположена на вершине мыса Новосильского острова Русский, на высоте 45,8 м над уровнем моря. Проход на территорию платный (ориентировочно 100 рублей для взрослых).' 
-            },
-            { 
-                lat: 42.998152, lng: 131.934601, name: 'Мыс Ахлёстышева', cat: 'beach', 
-                img: 'myc.jpg',
-                desc: 'Живописное место на острове Русский во Владивостоке, расположенное недалеко от Приморского океанариума. Это популярное место отдыха, где можно насладиться чистым морем, песчаным пляжем и активными видами спорта, включая сёрфинг и SUP-прогулки.' 
-            },
-            { 
-                lat: 43.000661, lng: 131.783742, name: 'Бухта Воевода', cat: 'beach', 
-                img: 'voe.jpg',
-                desc: 'Бухта расположена на острове Русский. Своё название она получила в честь корвета «Воевода», который участвовал в исследовании этих вод в XIX веке. Поблизости находится морская ферма «Воевода». В окрестностях популярны рыбалка, дайвинг и парапланеризм.' 
-            },
-            { 
-                lat: 42.992662, lng: 131.916871, name: 'Форт №12 Великого Князя Владимира Святого', cat: 'history', 
-                img: '12.jpg',
-                desc: 'Форт №12 — это объект Владивостокской крепости, расположенный на острове Русском во Владивостоке. Он был построен в рамках создания новой главной линии сухопутной обороны крепости в 1910–1917 годах. Форт напоминает в плане гигантскую бабочку. Он вытянут по фронту на 750 метров и состоит из трёх независимых узлов обороны.' 
-            },
-            { 
-                lat: 42.979000, lng: 131.916271, name: 'Береговая батарея №369 «Великокняжеская»', cat: 'history', 
-                img: '8.jpg',
-                desc: 'Это историческое фортификационное сооружение на острове Русский, часть комплекса Владивостокской крепости. Своё название она получила в честь визита во Владивосток в 1908 году генерал-инспектора артиллерии Великого князя Сергея Михайловича.' 
-            },
-        ];
+        function isFavorite(pointName) {
+            return favorites.includes(pointName);
+        }
         
-        // ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ СОЗДАНИЯ ИКОНОК (БЕЗ БЕЛОГО КВАДРАТА) =====
-        function createIcon(category) {
-            const color = categories[category]?.color || '#888888';
-            // Создаем HTML-элемент с цветным кругом, без фона и без границ
-            const html = `<div class="marker-dot" style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5); cursor: pointer;"></div>`;
+        function addFavorite(pointName) {
+            if (!favorites.includes(pointName)) {
+                favorites.push(pointName);
+                saveFavorites();
+            }
+        }
+        
+        function removeFavorite(pointName) {
+            favorites = favorites.filter(name => name !== pointName);
+            saveFavorites();
+        }
+        
+        function toggleFavorite(pointName) {
+            if (isFavorite(pointName)) {
+                removeFavorite(pointName);
+            } else {
+                addFavorite(pointName);
+            }
+        }
+        
+        function updateFavoritesUI() {
+            const countEl = document.getElementById('favoritesCount');
+            const listEl = document.getElementById('favoritesList');
             
-            return L.divIcon({
-                html: html,
-                className: 'transparent-marker',  // пустой класс без стилей
-                iconSize: [20, 20],
-                popupAnchor: [0, -10],
-                iconAnchor: [10, 10]
+            countEl.textContent = favorites.length;
+            
+            if (favorites.length === 0) {
+                listEl.innerHTML = '<div class="empty-favorites">❤️ Нет сохранённых мест<br>Нажмите на сердечко в карточке места</div>';
+                return;
+            }
+            
+            listEl.innerHTML = '';
+            favorites.forEach(favName => {
+                const item = document.createElement('div');
+                item.className = 'favorite-item';
+                item.innerHTML = `
+                    <span class="favorite-item-icon">📍</span>
+                    <span class="favorite-item-name">${favName}</span>
+                    <span class="favorite-item-remove" data-name="${favName}">🗑️</span>
+                `;
+                item.querySelector('.favorite-item-name').addEventListener('click', () => {
+                    const point = points.find(p => p.name === favName);
+                    if (point) {
+                        map.setView([point.lat, point.lng], 15);
+                        document.getElementById('favoritesPanel').classList.remove('show');
+                    }
+                });
+                item.querySelector('.favorite-item-remove').addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    removeFavorite(favName);
+                    updateFavoritesUI();
+                    document.querySelectorAll('.like-btn').forEach(btn => {
+                        if (btn.getAttribute('data-name') === favName) {
+                            btn.classList.remove('liked');
+                            btn.textContent = '♡';
+                        }
+                    });
+                });
+                listEl.appendChild(item);
             });
         }
         
-        // Добавляем все точки
+        const favoritesBtn = document.getElementById('favoritesBtn');
+        const favoritesPanel = document.getElementById('favoritesPanel');
+        const favoritesClose = document.getElementById('favoritesClose');
+        
+        favoritesBtn.addEventListener('click', () => {
+            favoritesPanel.classList.toggle('show');
+            updateFavoritesUI();
+        });
+        
+        favoritesClose.addEventListener('click', () => {
+            favoritesPanel.classList.remove('show');
+        });
+        
+        document.addEventListener('click', (e) => {
+            if (!favoritesPanel.contains(e.target) && !favoritesBtn.contains(e.target)) {
+                favoritesPanel.classList.remove('show');
+            }
+        });
+        
+        // ===== ДАННЫЕ ТОЧЕК =====
+        const points = [
+            { lat: 42.944895, lng: 131.870695, name: 'Мыс Тобизина', cat: 'viewpoint', img: 'mys-tobizina.jpg', desc: 'Знаменитые скалы-пальцы, один из самых живописных мысов Приморья. Тропа 2.5 км через лес. Лучшее место для заката на острове. Здесь можно увидеть лежбища нерп и редкие виды птиц. Рекомендуется посещать с мая по октябрь.' },
+            { lat: 42.958292, lng: 131.906837, name: 'Мыс Вятлина', cat: 'viewpoint', img: 'mys-vyatlinа.jpg', desc: 'Высокий утёс с обрывистыми скалами и видом на открытое море. Популярное место для уединённых прогулок. Отсюда открывается панорама на Уссурийский залив и архипелаг. Особенно красиво здесь во время цветения рододендронов в мае-июне.' },
+            { lat: 43.018794, lng: 131.777887, name: 'Мыс Таран', cat: 'viewpoint', img: 'mys-taran.jpg', desc: 'Это обрывистый скалистый мыс, сложенный из выветрившихся пластов красного гранита, который отвесно обрывается в залив. С него открывается живописный вид на бухту и противоположный мыс Половцева.' },
+            { lat: 43.031389, lng: 131.836111, name: 'Гора Русских', cat: 'viewpoint', img: 'gora-russkih.jpg', desc: 'Высочайшая точка острова — 291 м над уровнем моря. Подъём около часа пешком. Награда — потрясающая панорама на весь остров, Амурский залив и Владивосток. На вершине можно найти остатки фортификационных сооружений.' },
+            { lat: 43.037131, lng: 131.900738, name: 'Бухта Аякс', cat: 'beach', img: 'buhta-ayaks.jpg', desc: 'Центральный пляж у кампуса ДВФУ. Протяжённая набережная 1200 м с велодорожками. Есть шезлонги, кафе, прокат сапов и катамаранов. Отличное место для семейного отдыха, купания и прогулок. Летом проводятся концерты и фестивали.' },
+            { lat: 43.047816, lng: 131.847954, name: 'Бухта Новик', cat: 'beach', img: 'buhta-novik.jpg', desc: 'Популярный пляж с мелководьем и пологим берегом. Идеально для купания с детьми. Песок смешанный с галькой. Есть раздевалки и небольшое кафе. Вода прогревается быстрее, чем в других бухтах. Добраться можно на автобусе 29Д.' },
+            { lat: 42.987619, lng: 131.752733, name: 'Бухта Боярин', cat: 'beach', img: 'buhta-boyarin.jpg', desc: 'Уединённая галечная бухта на севере острова. Чистая прозрачная вода, мало людей. Добраться сложнее — нужен внедорожник или хорошая физическая подготовка (пешком 3 км). Награда — дикая природа и отсутствие цивилизации.' },
+            { lat: 42.981838, lng: 131.890520, name: 'Ворошиловская батарея', cat: 'history', img: 'voroshilovskaya-batareya.jpg', desc: 'Береговая бронебашенная батарея №981 — уникальный музей фортификации под открытым небом. Две башни с орудиями МБ-3-12 калибром 305 мм. Внутри можно увидеть подземные помещения, механизмы подачи снарядов. Вход — 200-300 ₽. Экскурсии проводятся ежедневно.' },
+            { lat: 43.049852, lng: 131.881409, name: 'Форт Поспелова', cat: 'history', img: 'fort-pospelova.jpg', desc: 'Форт князя Дмитрия Донского — часть Владивостокской крепости. Подземные потерны длиной до 50 м, каменный лабиринт «Небо», панорама на остров Скрыплева. Сохранились казармы, артиллерийские дворики. Вход свободный, но нужен фонарик.' },
+            { lat: 42.984961, lng: 131.808994, name: 'Форт №9 (князя Рюрика)', cat: 'history', img: 'fort-9.jpg', desc: 'Самый мощный форт острова. Высота около 160 м над уровнем моря. Отличные виды на архипелаг и море. Сохранились подземные ходы, капониры, пороховые погреба. Построен в 1900-1910 годах. Обязательно взять с собой фонарик и удобную обувь.' },
+            { lat: 43.027934, lng: 131.894033, name: 'Парк ДВФУ', cat: 'nature', img: 'park-dvfu.jpg', desc: 'Благоустроенный парк на территории кампуса ДВФУ. Аллеи, пруды с карпами, японский сад с пагодой. Отличное место для прогулок, пробежек и пикников. Летом проводятся концерты и фестивали. Вход свободный. Красивый вид на бухту Аякс и Русский мост.' },
+            { lat: 43.014654, lng: 131.930501, name: 'Приморский океанариум', cat: 'infra', img: 'oceanarium.jpg', desc: 'Один из крупнейших океанариумов в мире. 135 аквариумов с 6000+ обитателей. Шоу дельфинов и косаток, туннель с акулами, экспозиция «Эволюция жизни». Взрослый билет — 1200 ₽, детский — 700 ₽. Работает со среды по воскресенье.' },
+            { lat: 43.024320, lng: 131.894809, name: 'Кампус ДВФУ', cat: 'infra', img: 'campus-dvfu.jpg', desc: 'Университетский городок на берегу бухты Аякс. Современная архитектура, удобная набережная, бесплатные маршрутки по территории. Можно прогуляться по кампусу, зайти в столовые и кафе. Красивый вид на море и мост. Вход свободный.' },
+            { lat: 43.064860, lng: 131.910413, name: 'Русский мост', cat: 'road', img: 'russky-bridge.jpg', desc: 'Один из самых длинных вантовых мостов в мире — 1104 метра! Высота пилонов 324 метра. Построен в 2012 году к саммиту АТЭС. Изображён на купюре 2000 рублей. Соединяет материк с островом. Можно пройти по тротуару — потрясающий вид на пролив Босфор Восточный.' },
+            { lat: 43.043701, lng: 131.821919, name: 'Свято-Серафимовский монастырь', cat: 'infra', img: 'monax.jpg', desc: 'Монастырь основан 11 октября 2001 года постановлением Священного Синода Русской православной церкви. Приход храма преподобного Серафима Саровского на острове Русский преобразован в мужской монастырь.' },
+            { lat: 43.057213, lng: 131.900984, name: 'Батарея Новосильцевская', cat: 'history', img: 'novoc.jpg', desc: 'Архитектурный ансамбль во Владивостоке, входит в комплекс фортификационных сооружений Владивостокской крепости. Расположена на вершине мыса Новосильского острова Русский, на высоте 45,8 м над уровнем моря. Проход на территорию платный (ориентировочно 100 рублей для взрослых).' },
+            { lat: 42.998152, lng: 131.934601, name: 'Мыс Ахлёстышева', cat: 'beach', img: 'myc.jpg', desc: 'Живописное место на острове Русский во Владивостоке, расположенное недалеко от Приморского океанариума. Это популярное место отдыха, где можно насладиться чистым морем, песчаным пляжем и активными видами спорта, включая сёрфинг и SUP-прогулки.' },
+            { lat: 43.000661, lng: 131.783742, name: 'Бухта Воевода', cat: 'beach', img: 'voe.jpg', desc: 'Бухта расположена на острове Русский. Своё название она получила в честь корвета «Воевода», который участвовал в исследовании этих вод в XIX веке. Поблизости находится морская ферма «Воевода». В окрестностях популярны рыбалка, дайвинг и парапланеризм.' },
+            { lat: 42.992662, lng: 131.916871, name: 'Форт №12 Великого Князя Владимира Святого', cat: 'history', img: '12.jpg', desc: 'Форт №12 — это объект Владивостокской крепости, расположенный на острове Русском во Владивостоке. Он был построен в рамках создания новой главной линии сухопутной обороны крепости в 1910–1917 годах. Форт напоминает в плане гигантскую бабочку. Он вытянут по фронту на 750 метров и состоит из трёх независимых узлов обороны.' },
+            { lat: 42.979000, lng: 131.916271, name: 'Береговая батарея №369 «Великокняжеская»', cat: 'history', img: '8.jpg', desc: 'Это историческое фортификационное сооружение на острове Русский, часть комплекса Владивостокской крепости. Своё название она получила в честь визита во Владивосток в 1908 году генерал-инспектора артиллерии Великого князя Сергея Михайловича.' }
+        ];
+        
+        // ===== ФУНКЦИЯ СОЗДАНИЯ ИКОНОК =====
+        function createIcon(category) {
+            const color = categories[category]?.color || '#888888';
+            const html = `<div class="marker-dot" style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5); cursor: pointer;"></div>`;
+            return L.divIcon({ html: html, className: 'transparent-marker', iconSize: [20, 20], popupAnchor: [0, -10], iconAnchor: [10, 10] });
+        }
+        
+        // ===== ДОБАВЛЕНИЕ ТОЧЕК =====
         points.forEach(point => {
             const catInfo = categories[point.cat];
-            // Локальный путь к фото
             const imageUrl = point.img ? `images/${point.img}` : 'images/placeholder.jpg';
+            const isLiked = isFavorite(point.name);
             
             const popupHtml = `
                 <div class="popup-content">
@@ -554,7 +751,10 @@
                              onerror="this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' viewBox=\'0 0 400 300\'%3E%3Crect width=\'400\' height=\'300\' fill=\'%231a1a2e\'/%3E%3Ctext x=\'200\' y=\'150\' text-anchor=\'middle\' fill=\'%23666\' font-size=\'20\'%3E📷 Фото не загружено%3C/text%3E%3C/svg%3E'">
                     </div>
                     <div class="popup-text">
-                        <div class="popup-title">${catInfo.icon} ${point.name}</div>
+                        <div class="popup-header-row">
+                            <div class="popup-title">${catInfo.icon} ${point.name}</div>
+                            <button class="like-btn ${isLiked ? 'liked' : ''}" data-name="${point.name}">${isLiked ? '❤️' : '♡'}</button>
+                        </div>
                         <div class="popup-description">${point.desc}</div>
                         <div class="popup-category">${catInfo.name}</div>
                     </div>
@@ -562,14 +762,24 @@
             `;
             
             const marker = L.marker([point.lat, point.lng], { icon: createIcon(point.cat) }).addTo(map);
-            marker.bindPopup(popupHtml, {
-                maxWidth: 380,
-                minWidth: 280,
-                className: 'custom-popup',
-                autoPan: true
+            marker.bindPopup(popupHtml, { maxWidth: 380, minWidth: 280, className: 'custom-popup', autoPan: true });
+            
+            marker.on('popupopen', () => {
+                const likeBtn = document.querySelector(`.like-btn[data-name="${point.name}"]`);
+                if (likeBtn) {
+                    likeBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        toggleFavorite(point.name);
+                        const isNowLiked = isFavorite(point.name);
+                        likeBtn.textContent = isNowLiked ? '❤️' : '♡';
+                        likeBtn.classList.toggle('liked', isNowLiked);
+                        updateFavoritesUI();
+                    };
+                }
             });
         });
         
+        updateFavoritesUI();
         setTimeout(() => map.invalidateSize(), 200);
     </script>
 </body>
