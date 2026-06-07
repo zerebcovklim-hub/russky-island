@@ -26,18 +26,16 @@
             z-index: 1;
         }
         
-        /* ===== ПРИВЕТСТВЕННЫЙ ЭКРАН ===== */
-        .splash-screen {
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('images/splash-bg.jpg') no-repeat center center fixed;
-            background-size: cover;
-        }
+        /* ===== ПРИВЕТСТВЕННЫЙ ЭКРАН С КАРТИНКОЙ ===== */
         .splash-screen {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            /* ВОТ ЗДЕСЬ ЗАМЕНИЛ ФОН НА КАРТИНКУ ИЗ ПАПКИ images */
+            background: url('images/splash-bg.jpg') no-repeat center center fixed;
+            background-size: cover;
             z-index: 10000;
             display: flex;
             justify-content: center;
@@ -56,6 +54,9 @@
             text-align: center;
             padding: 30px;
             animation: fadeInUp 0.6s ease;
+            background: rgba(0,0,0,0.5);
+            border-radius: 30px;
+            backdrop-filter: blur(8px);
         }
         
         @keyframes fadeInUp {
@@ -528,7 +529,7 @@
         // ===== ИСПРАВЛЕННАЯ ФУНКЦИЯ СОЗДАНИЯ ИКОНОК (БЕЗ БЕЛОГО КВАДРАТА) =====
         function createIcon(category) {
             const color = categories[category]?.color || '#888888';
-            // Создаём HTML-элемент с цветным кругом, без фона и без границ
+            // Создаем HTML-элемент с цветным кругом, без фона и без границ
             const html = `<div class="marker-dot" style="background-color: ${color}; width: 16px; height: 16px; border-radius: 50%; border: 2px solid white; box-shadow: 0 0 4px rgba(0,0,0,0.5); cursor: pointer;"></div>`;
             
             return L.divIcon({
