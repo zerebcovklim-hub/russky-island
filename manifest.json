@@ -2,20 +2,21 @@
   "name": "Остров Русский",
   "short_name": "Русский остров",
   "description": "Туристическая карта острова Русский с 50 достопримечательностями",
-  "start_url": "/russky-islandS/index.html"
+  "start_url": "/russky-island/index.html",
+  "scope": "/russky-island/",
   "display": "standalone",
   "theme_color": "#1a1a2e",
   "background_color": "#1a1a2e",
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icon-192.png",
+      "src": "/russky-island/icon-192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "icon-512.png",
+      "src": "/russky-island/icon-512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any"
